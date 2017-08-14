@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Survey Page</title>
+  <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
 
   <!-- Latest compiled and minified CSS & JS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -17,11 +18,16 @@
     .dropdown-content {
       cursor: pointer
       background-color: #f9f9f9;
-      padding:16px 16px;
+      padding:6px 6px;
+      margin-left:20px;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
     }
-
+    body{
+      /*background-color: red;*/
+    background-image: url("festival.jpg");
+    /*background-size:100% 100%;*/
+    }
 
     option {
       background-color: #f1f1f1;
@@ -32,16 +38,55 @@
 
     }
 
+    html{
+    	height:100%;
+    	overflow: auto;
+    }
+    body{
+    	height:100%;
+    	overflow: auto;
+    	margin:0;
+    }
+    p{
+      margin-bottom: 2px;
+      margin-left:20px;
+      font-weight: bold;
+      font-size:1.2em;
+    }
+    body{
+    	clear:both;
+    	overflow:auto;
+    	background-image: url("/public/images/blackglitter.jpg");
+      background-color:grey;
+    	background-size:100% 100%;
+    	position:fixed;
+    	top:0;
+    	left:0;
+    	width:100%;
+    	height:100%;
+    }
+
+
+    .jumbotron{
+      font-family: 'Pacifico', cursive;
+      /*background-color:rgba(255, 255, 255, 0.5);*/
+      background-color:rgba(0, 0, 0, 1);
+      color:rgb(155, 155, 155);
+      margin-top:50px;
+      padding: 35px 12px
+    }
+
   </style>
 </head>
 
 <body>
 
   <div class="container">
-
     <div class="jumbotron">
-      <h1 class="text-center"><span class="glyphicon glyphicon-heart"><span class="glyphicon glyphicon-plus"><span class="glyphicon glyphicon-heart"></span> </h1>
+      <h1 class="text-center"> <span class="glyphicon glyphicon-heart"> <span class="glyphicon glyphicon-plus"> <span class="glyphicon glyphicon-heart"></span></h1>
+      <br>
       <hr>
+
       <h2 class="text-center">Fill Out the Survey!</h2>
 
       <br>
@@ -76,18 +121,8 @@
                 <input type="text" class="form-control" id="picture-url">
               </div>
 
-              <div class="form-group">
-                <span> I am extremely outgoing </span>
-                <select class="dropdown-content"  id="question1">
-                  <option value="1">1-strongly disagree</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5- strongly agree</option>
-                </select>
-                <br><br>
-
-              </div>
+              <div class="form-group" id="dropdownSection">
+                </div>
 
 
               <button type="submit" class="btn btn-primary submit">Submit</button>
@@ -102,7 +137,7 @@
 
     <footer class="footer">
       <div class="container">
-        <p><a href="/api/friends">Friends API</a> || <a href="https://github.com/afhaque/HotRestaurant">GitHub Repo</a></p>
+        <p><a href="/api/friends">Friends API</a> || <a href="https://github.com/Maya-Tea/friendFinder">GitHub Repo</a></p>
       </div>
     </footer>
 
@@ -114,7 +149,7 @@
 
 <!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
 <script type="text/javascript">
-  var questions = ['Q1', 'Q2'];
+  var questions = [ 'I am very outgoing', 'I love children and animals', 'I am creative', 'I seek adventure', 'I am good at understanding emotions', 'I love to party','I am athletic', 'I value intelligence first', 'Protecting feelings is more important than honesty', 'In circumstances I will resort to violence'];
   makeDropDowns();
 
   function makeDropDowns() {
@@ -122,22 +157,23 @@
     for (var i = 0; i < questions.length; i++) {
 
       // Create the HTML Well (Section) and Add the table content for each reserved table
-      var dropdownSection = $('<div class="dropdown show">');
-      var toggleButton = $('<a class="btn btn-secondary dropdown-toggle" href="https://example.com" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">').text('Dropdown link');
+      var p=$('<p>').text(questions[i]);
 
-      var dropdownMenu = $('<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">');
-      var option1 = $('<a class="dropdown-item" href="#">').text('1');
-      var option2 = $('<a class="dropdown-item" href="#">').text('2');
-      var option3 = $('<a class="dropdown-item" href="#">').text('3');
-      var option4 = $('<a class="dropdown-item" href="#">').text('4');
-      var option5 = $('<a class="dropdown-item" href="#">').text('5');
+
+      var dropdownMenu = $('<select required class="dropdown-content"  id="q1">');
+      var option1 = $('<option value="1">').text('1 - strongly disagree');
+      var option2 = $('<option value="2">').text('2');
+      var option3 = $('<option value="3">').text('3');
+      var option4 = $('<option value="4">').text('4');
+      var option5 = $('<option value="5">').text('5 - strongly agree');
       //tableSection.addClass("well");
-      dropdownSection.attr("id", "dropDown-" + i + 1);
+        var qNum = i + 1;
+      dropdownMenu.attr("id", "q" + qNum);
       dropdownMenu.append(option1, option2, option3, option4, option5);
-      dropdownSection.append(dropdownMenu, toggleButton)
-      $("#surveyForm").append(dropdownSection);
 
-      var questionNumber = i + 1;
+      $("#dropdownSection").append(p,dropdownMenu,$('<br>'),$('<br>'));
+
+
 
 
       // Then display the remaining fields in the HTML (Section Name, Date, URL)
@@ -150,11 +186,15 @@
     event.preventDefault();
 
     // Here we grab the form elements
+    var answers=[];
+    for(var i=0; i<questions.length; i++){
+    id="q"+(i+1)
+    answers.push(parseInt($("#"+id).val().trim()));
+  }
     var newFriend = {
       name: $("#friend-name").val().trim(),
       photo: $("#picture-url").val().trim(),
-      q1: $("#question1").val().trim()
-
+      personality: answers
     };
 
     console.log(newFriend);
@@ -186,27 +226,5 @@
 
   });
 
-  function myFunction() {
-    document.getElementById("myDropdown").classList.toggle("show");
-  }
 
-  // Close the dropdown if the user clicks outside of it
-  window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
-      for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
-    }
-  }
-
-  function select() {
-    alert('hi');
-  }
-  $("#dropdownDiv").on("click", '.selection', select);
 </script>

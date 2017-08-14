@@ -1,0 +1,32 @@
+html{
+	height:100%;
+	overflow: auto;
+}
+body{
+	height:100%;
+	overflow: auto;
+	margin:0;
+}
+
+body{
+	clear:both;
+	overflow:auto;
+	background-image: url("https://c2.staticflickr.com/6/5706/21529504251_53a18dc198_b.jpg");
+  background-color:grey;
+	background-size:100% 100%;
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+
+
+.jumbotron{
+  font-family: 'Pacifico', cursive;
+  /*background-color:rgba(255, 255, 255, 0.5);*/
+  background-color:rgba(0, 0, 0, 1);
+  color:rgb(155, 155, 155);
+  margin-top:50px;
+  padding: 35px 12px
+}
