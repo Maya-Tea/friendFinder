@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Survey Page</title>
+
+  <!-- Latest compiled and minified CSS & JS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <!-- Chosen -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+
+  <style>
+
+    .dropdown-content {
+      cursor: pointer
+      background-color: #f9f9f9;
+      padding:16px 16px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+
+    option {
+      background-color: #f1f1f1;
+
+    }
+    option:hover {
+      background-color: white;
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="jumbotron">
+      <h1 class="text-center"><span class="glyphicon glyphicon-heart"><span class="glyphicon glyphicon-plus"><span class="glyphicon glyphicon-heart"></span> </h1>
+      <hr>
+      <h2 class="text-center">Fill Out the Survey!</h2>
+
+      <br>
+
+      <div class="text-center">
+
+        <a href="/"><button type="button" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-home"></span></button></a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+
+        <!-- Reservation Page -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Compatibility Survey</h4>
+          </div>
+          <div class="panel-body">
+
+            <form role="form" id="surveyForm">
+
+              <div class="form-group">
+                <label for="friend-name">Name</label>
+                <input type="text" class="form-control" id="friend-name">
+              </div>
+
+
+
+              <div class="form-group">
+                <label for="picture-url">Picture Url</label>
+                <input type="text" class="form-control" id="picture-url">
+              </div>
+
+              <div class="form-group">
+                <span> I am extremely outgoing </span>
+                <select class="dropdown-content"  id="question1">
+                  <option value="1">1-strongly disagree</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5- strongly agree</option>
+                </select>
+                <br><br>
+
+              </div>
+
+
+              <button type="submit" class="btn btn-primary submit">Submit</button>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <footer class="footer">
+      <div class="container">
+        <p><a href="/api/friends">Friends API</a> || <a href="https://github.com/afhaque/HotRestaurant">GitHub Repo</a></p>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+
+</html>
+
+<!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
+<script type="text/javascript">
+  var questions = ['Q1', 'Q2'];
+  makeDropDowns();
+
+  function makeDropDowns() {
+    console.log('hi')
+    for (var i = 0; i < questions.length; i++) {
+
+      // Create the HTML Well (Section) and Add the table content for each reserved table
+      var dropdownSection = $('<div class="dropdown show">');
+      var toggleButton = $('<a class="btn btn-secondary dropdown-toggle" href="https://example.com" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">').text('Dropdown link');
+
+      var dropdownMenu = $('<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">');
+      var option1 = $('<a class="dropdown-item" href="#">').text('1');
+      var option2 = $('<a class="dropdown-item" href="#">').text('2');
+      var option3 = $('<a class="dropdown-item" href="#">').text('3');
+      var option4 = $('<a class="dropdown-item" href="#">').text('4');
+      var option5 = $('<a class="dropdown-item" href="#">').text('5');
+      //tableSection.addClass("well");
+      dropdownSection.attr("id", "dropDown-" + i + 1);
+      dropdownMenu.append(option1, option2, option3, option4, option5);
+      dropdownSection.append(dropdownMenu, toggleButton)
+      $("#surveyForm").append(dropdownSection);
+
+      var questionNumber = i + 1;
+
+
+      // Then display the remaining fields in the HTML (Section Name, Date, URL)
+      //$("#tableWell-" + i + 1).append("<h2><span class='label label-primary'>" + tableNumber + "</span> | " + tableData[i].customerID + "</h2>");
+    }
+  }
+
+
+  $(".submit").on("click", function(event) {
+    event.preventDefault();
+
+    // Here we grab the form elements
+    var newFriend = {
+      name: $("#friend-name").val().trim(),
+      photo: $("#picture-url").val().trim(),
+      q1: $("#question1").val().trim()
+
+    };
+
+    console.log(newFriend);
+
+    // This line is the magic. It"s very similar to the standard ajax function we used.
+    // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
+    // The callback is the response of the server. In our case, we set up code in api-routes that "returns" true or false
+    // depending on if a tables is available or not.
+
+    $.post("/api/friends", newFriend,
+      function(data) {
+
+        // If a table is available... tell user they are booked.
+        if (data) {
+          alert("Yay! You are a friend Now!");
+        }
+
+        // If a table is available... tell user they on the waiting list.
+        else {
+          alert("Sorry you are on the wait list");
+        }
+
+        // Clear the form when submitting
+        $("#friend-name").val("");
+        $("#picture-url").val("");
+
+
+      });
+
+  });
+
+  function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+
+  // Close the dropdown if the user clicks outside of it
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+
+  function select() {
+    alert('hi');
+  }
+  $("#dropdownDiv").on("click", '.selection', select);
+</script>
