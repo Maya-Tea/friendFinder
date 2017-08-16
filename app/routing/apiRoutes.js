@@ -1,23 +1,8 @@
-// ===============================================================================
-// LOAD DATA
-// We are linking our routes to a series of "data" sources.
-// These data sources hold arrays of information on table-data, waitinglist, etc.
-// ===============================================================================
 
 var friends = require("../data/friends");
 
-
-
-// ===============================================================================
-// ROUTING
-// ===============================================================================
-
 module.exports = function(app) {
-  // API GET Requests
-  // Below code handles when users "visit" a page.
-  // In each of the below cases when a user visits a link
-  // (ex: localhost:PORT/api/admin... they are shown a JSON of the data in the table)
-  // ---------------------------------------------------------------------------
+
 
   app.get("/api/friends", function(req, res) {
     res.json(friends);
@@ -26,26 +11,38 @@ module.exports = function(app) {
 
   app.post("/api/friends", function(req, res) {
     friends.push(req.body);
-    res.json("best match");
-  //  if (tableData.length < 5) {
-  //    tableData.push(req.body);
-  //    res.json(true);
-  //  }
-  //  else {
-  //    waitListData.push(req.body);
-  //    res.json(false);
-  //  }
+    console.log(req.body);
+    var newScoreArray=[]
+
+    for(var i=0; i<req.body.scores.length; i++){
+      var intVal =parseInt(req.body.scores[i]);
+      newScoreArray.push(intVal);
+    }
+    console.log(newScoreArray);
+    var diffArray=[];
+    var sumArray=[];
+    for(var i=0; i<friends.length-1; i++){
+
+      var currentSum=0;
+
+      for(var j=0; j<(req.body.scores.length); j++){
+
+        currentSum=currentSum+Math.abs(newScoreArray[j]-friends[i]["scores"][j]);
+
+      }
+      console.log(currentSum);
+      sumArray.push(currentSum);
+
+    }
+    //const nums = [1, 2, 3]
+//Math.min(...nums)
+    console.log(sumArray);
+    minNum=Math.min(...sumArray);
+    var indexOfMatch=sumArray.indexOf(minNum);
+    var match=friends[indexOfMatch];
+    console.log(match);
+    res.json(match);
+
   });
 
-  // ---------------------------------------------------------------------------
-  // I added this below code so you could clear out the table while working with the functionality.
-  // Don"t worry about it!
-
-  app.post("/api/clear", function() {
-    // Empty out the arrays of data
-    friends = [];
-
-
-    console.log(friends);
-  });
 };

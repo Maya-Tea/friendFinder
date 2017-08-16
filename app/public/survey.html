@@ -5,78 +5,13 @@
   <meta charset="UTF-8">
   <title>Survey Page</title>
   <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+  <link href="/public/css/styles.css" rel="stylesheet">
 
   <!-- Latest compiled and minified CSS & JS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-
-
-  <style>
-
-    .dropdown-content {
-      cursor: pointer
-      background-color: #f9f9f9;
-      padding:6px 6px;
-      margin-left:20px;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-    }
-    body{
-      /*background-color: red;*/
-    background-image: url("festival.jpg");
-    /*background-size:100% 100%;*/
-    }
-
-    option {
-      background-color: #f1f1f1;
-
-    }
-    option:hover {
-      background-color: white;
-
-    }
-
-    html{
-    	height:100%;
-    	overflow: auto;
-    }
-    body{
-    	height:100%;
-    	overflow: auto;
-    	margin:0;
-    }
-    p{
-      margin-bottom: 2px;
-      margin-left:20px;
-      font-weight: bold;
-      font-size:1.2em;
-    }
-    body{
-    	clear:both;
-    	overflow:auto;
-    	background-image: url("/public/images/blackglitter.jpg");
-      background-color:grey;
-    	background-size:100% 100%;
-    	position:fixed;
-    	top:0;
-    	left:0;
-    	width:100%;
-    	height:100%;
-    }
-
-
-    .jumbotron{
-      font-family: 'Pacifico', cursive;
-      /*background-color:rgba(255, 255, 255, 0.5);*/
-      background-color:rgba(0, 0, 0, 1);
-      color:rgb(155, 155, 155);
-      margin-top:50px;
-      padding: 35px 12px
-    }
-
-  </style>
 </head>
 
 <body>
@@ -122,7 +57,7 @@
               </div>
 
               <div class="form-group" id="dropdownSection">
-                </div>
+              </div>
 
 
               <button type="submit" class="btn btn-primary submit">Submit</button>
@@ -134,6 +69,16 @@
       </div>
     </div>
 
+
+<div id="myModal" class="modal">
+
+  <div id= "matchArea" class="modal-content">
+
+    <br>
+    <span class="return">Return to Survey</span>
+  </div>
+
+</div>
 
     <footer class="footer">
       <div class="container">
@@ -147,9 +92,11 @@
 
 </html>
 
-<!-- BELOW CODE IS CRITICAL. IT HANDLES HOW FORM DATA IS SENT TO OUR SERVER -->
+
 <script type="text/javascript">
-  var questions = [ 'I am very outgoing', 'I love children and animals', 'I am creative', 'I seek adventure', 'I am good at understanding emotions', 'I love to party','I am athletic', 'I value intelligence first', 'Protecting feelings is more important than honesty', 'In circumstances I will resort to violence'];
+  var questions = ['I love children and animals', 'I am competitive', 'I will manipulate others for my gain', 'Creativity drives me', 'I constantly have hairbrained schemes', 'I am empathetic', 'I love to party', 'I am athletic',
+    'I value intelligence first', 'I like to read', 'I am someone of few words', 'I will resort to violence', "I am hardworking", "I am vain"
+  ];
   makeDropDowns();
 
   function makeDropDowns() {
@@ -157,7 +104,7 @@
     for (var i = 0; i < questions.length; i++) {
 
       // Create the HTML Well (Section) and Add the table content for each reserved table
-      var p=$('<p>').text(questions[i]);
+      var p = $('<p>').text(questions[i]);
 
 
       var dropdownMenu = $('<select required class="dropdown-content"  id="q1">');
@@ -167,18 +114,26 @@
       var option4 = $('<option value="4">').text('4');
       var option5 = $('<option value="5">').text('5 - strongly agree');
       //tableSection.addClass("well");
-        var qNum = i + 1;
+      var qNum = i + 1;
       dropdownMenu.attr("id", "q" + qNum);
       dropdownMenu.append(option1, option2, option3, option4, option5);
 
-      $("#dropdownSection").append(p,dropdownMenu,$('<br>'),$('<br>'));
+      $("#dropdownSection").append(p, dropdownMenu, $('<br>'), $('<br>'));
 
-
-
-
-      // Then display the remaining fields in the HTML (Section Name, Date, URL)
-      //$("#tableWell-" + i + 1).append("<h2><span class='label label-primary'>" + tableNumber + "</span> | " + tableData[i].customerID + "</h2>");
     }
+  }
+
+  var modal = document.getElementById('myModal');
+  var returnBtn = document.getElementsByClassName("return")[0];
+
+  returnBtn.onclick = function() {
+      modal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
   }
 
 
@@ -186,18 +141,19 @@
     event.preventDefault();
 
     // Here we grab the form elements
-    var answers=[];
-    for(var i=0; i<questions.length; i++){
-    id="q"+(i+1)
-    answers.push(parseInt($("#"+id).val().trim()));
-  }
+    var answers = [];
+    for (var i = 0; i < questions.length; i++) {
+      id = "q" + (i + 1)
+      answers.push(parseInt($("#" + id).val().trim()));
+    }
     var newFriend = {
       name: $("#friend-name").val().trim(),
       photo: $("#picture-url").val().trim(),
-      personality: answers
+      scores: answers
+
     };
 
-    console.log(newFriend);
+    //console.log(newFriend);
 
     // This line is the magic. It"s very similar to the standard ajax function we used.
     // Essentially we give it a URL, we give it the object we want to send, then we have a "callback".
@@ -209,22 +165,35 @@
 
         // If a table is available... tell user they are booked.
         if (data) {
-          alert("Yay! You are a friend Now!");
+          console.log(data);
+          $('#matchContent').remove();
+          var div= $("<div id= 'matchContent'>");
+          var p= $('<h1>').text(data.name+" is your match!");
+          var image= $('<img class="modal-img">');
+          image.attr('src', data.photo);
+          div.append(p, image);
+          $("#matchArea").prepend(div);
+          $("#myModal").css('display', 'block');
         }
+
 
         // If a table is available... tell user they on the waiting list.
         else {
           alert("Sorry you are on the wait list");
         }
 
+        document.getElementById("surveyForm").reset();
+
         // Clear the form when submitting
-        $("#friend-name").val("");
-        $("#picture-url").val("");
+        // $("#friend-name").val("");
+        // $("#picture-url").val("");
+        // for (var i = 0; i < questions.length; i++) {
+        //   id = "q" + (i + 1)
+        //   $("#" + id).val("1");
+        // }
 
 
       });
 
   });
-
-
 </script>
